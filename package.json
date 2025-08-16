@@ -1,0 +1,30 @@
+{
+  "name": "frontenweb_playwrigth",
+  "version": "1.0.0",
+  "main": "index.js",
+  "scripts": {
+    "test": "echo \"Error: no test specified\" && exit 1"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "devDependencies": {
+    "@playwright/test": "^1.54.2"
+  },
+  "directories": {
+    "test": "tests"
+  },
+  "dependencies": {
+    "playwright": "^1.54.2",
+    "playwright-core": "^1.54.2"
+  },
+  "repository": {
+    "type": "git",
+    "url": "git+https://erpalora@github.com/erpalora/Automatizaci-n_Asisya_pruebatecnica.git"
+  },
+  "bugs": {
+    "url": "https://github.com/erpalora/Automatizaci-n_Asisya_pruebatecnica/issues"
+  },
+  "homepage": "https://github.com/erpalora/Automatizaci-n_Asisya_pruebatecnica#readme",
+  "description": ""
+}
