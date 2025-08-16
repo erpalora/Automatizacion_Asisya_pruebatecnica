@@ -1,114 +1,137 @@
-# Automatización Asisya - Prueba Técnica sección D
+# Automatización Asisya – Prueba Técnica QA
 
-## 1. Frontend Web
+Este repositorio contiene la solución a la prueba técnica para la vacante de Ingeniero QA.  
+Incluye pruebas funcionales y automatizadas sobre API y Frontend, además de evidencias documentadas.
 
-Este proyecto contiene pruebas automatizadas para el módulo "Mi Asistencia" de la aplicación web Asisya, utilizando Playwright.
+---
 
-## Descripción
-Las pruebas verifican funcionalidades clave como:
-- Ingreso al módulo y visualización del estado de asistencia.
-- Validación de los datos del profesional asignado.
+## 📂 Sección A – Diseño de Pruebas
+Se documentó el análisis de requerimientos y la creación de **casos de prueba** para el endpoint `/api/asisya/solicitud-asistencia`.  
+Se incluyeron casos positivos, negativos y de validación de campos obligatorios.  
 
-## Estructura del proyecto
-- `tests/`: Contiene los scripts de pruebas automatizadas.
-- `playwright.config.js`: Configuración de Playwright para la ejecución de pruebas.
-- `playwright-report/`: Reportes HTML generados tras la ejecución de pruebas.
-- `test-results/`: Videos y resultados de las ejecuciones.
+📄 Los casos están disponibles en la carpeta `Seccion_a/` como documento detallado.
 
-## Instalación
-1. Clona el repositorio.
-2. Instala las dependencias:
-   ```powershell
-   npm install
-   ```
+---
 
-## Ejecución de pruebas
-Para ejecutar las pruebas y generar el reporte HTML:
-```powershell
-npm run test
-```
-El reporte se genera en la carpeta `playwright-report`.
+## 📂 Sección B – Automatización de API y Frontend
 
-## Dependencias principales
-- [Playwright](https://playwright.dev/)
+### 1. Automatización de Frontend (Playwright)
+Se entregó un fragmento de test defectuoso que debía corregirse.  
 
-## Notas
-- Las credenciales de prueba están definidas en los scripts.
-- Los videos y traces se generan automáticamente en caso de fallos.
+**Problema detectado:**
+- Navegaba a `http://localhost:3000/mi-asistencia` sin aplicación disponible → `ERR_CONNECTION_REFUSED`.
+- Los selectores no encontraban elementos → timeouts y flakiness.
 
+**Solución aplicada:**
+- Se creó un dummy HTML `example-app/mi-asistencia/index.html` con:
+  - Título `<h1>Mi Asistencia</h1>`.
+  - Estado en tiempo real (`data-testid="estado-asistencia"`).
+  - Tarjeta de profesional asignado (`data-testid="profesional-card"`).
+- Se corrigieron los selectores en el test.
+- Se sirvió el HTML con `http-server` en el puerto 3000.
+- El test se ejecutó en Playwright y ahora **pasa estable**.
 
+**Evidencia:**
+- 📸 Screenshot: `Seccion_b/evidencia/mi-asistencia-ok.png`
+- 🎥 Video de ejecución: `Seccion_b/test-results/.../video.webm`
+- 📊 Reporte HTML: `Seccion_b/playwright-report/index.html`
 
-## 2. Ejecución de pruebas con Postman
+---
 
-1. Importar colección y environment
+### 2. Automatización de API (Postman)
+Se construyó una colección en Postman con pruebas sobre el endpoint `/api/asisya/solicitud-asistencia`.  
 
-- Abre Postman.
+**Flujo desarrollado:**
+1. Se configuró un **Mock Server en Postman** para simular la API.  
+2. Se implementaron requests de:
+   - Solicitud válida → responde 200 con JSON correcto.  
+   - Solicitud inválida → responde 400 con mensaje de error.  
+3. Se programaron tests automáticos en Postman para validar:
+   - Código de estado esperado.  
+   - Tiempo de respuesta < 2 segundos.  
+   - Estructura del JSON de respuesta.  
+   - Presencia y contenido de campos obligatorios (`idSolicitud`, `estado`, `mensaje`).  
 
-- En la parte superior izquierda, haz clic en Import.
+**Evidencia:**
+- 📄 Colección: `Seccion_b/Asisya_API_Tests.postman_collection.json`  
+- 🌍 Environment: `Seccion_b/Asisya-Prod.postman_environment.json`  
+- 📑 Readme con instrucciones de ejecución paso a paso.  
 
-- Selecciona el archivo:
+**Nota:** Inicialmente se recibieron errores `400` y `404` al apuntar al endpoint real, por lo cual se resolvió implementando un Mock Server. Esto permitió validar el flujo y los tests de manera controlada.  
 
-- Asisya_API_Tests.postman_collection.json
+---
 
-- Asisya-Prod.postman_environment.json
+## 📂 Sección C – Test Automatizado (Playwright)
 
-- Confirma la importación. Verás la colección y el environment en tu workspace.
+**Objetivo:** Corregir un test defectuoso e identificar causa de fallo.
 
-2. Configurar el environment
+**Fallas originales:**
+- Conexión a `localhost:3000` sin app levantada.  
+- Selectores frágiles que no encontraban elementos.  
 
-- En la parte superior derecha de Postman, selecciona el environment Asisya-Prod.
+**Solución:**
+- Se creó dummy HTML `mi-asistencia/index.html`.  
+- Se corrigieron selectores y esperas en el test.  
+- Se ejecutó contra un servidor estático local.  
 
-- Verifica que la variable base_url tenga el valor del Mock Server activo (ejemplo):
+**Resultado:**  
+✔ Todos los assertions pasan.  
+✔ Se adjunta evidencia (screenshot, video, logs, reporte HTML).  
 
-https://97b356bc-21b1-4720-9fcc-0dface8fc6cb.mock.pstmn.io
+---
 
-3. Ejecutar los requests
+## 📂 Sección D – Pruebas de Rendimiento (JMeter + Power BI)
 
-- Dentro de la colección Asisya – API Tests encontrarás dos requests principales:
+**Objetivo:** Medir desempeño del endpoint `/solicitud-asistencia`.  
 
-- Solicitud de asistencia (válida) → responde con 200 OK y cuerpo exitoso.
+**Ejecución:**
+- Se configuró un plan de pruebas en JMeter con Thread Group y HTTP Request.  
+- Al apuntar al endpoint real, se obtuvieron errores 400/404.  
+- Para resolverlo, se usó el **Mock Server de Postman** como backend simulado.  
 
-- Solicitud de asistencia (inválida) → responde con 400 Bad Request y mensaje de error.
+**Resultados:**
+- Se recolectaron métricas de latencia, throughput y errores con **Summary Report** y **Aggregate Report**.  
+- Los resultados se exportaron a CSV y se visualizaron en Power BI.  
 
-4. Revisar los resultados
+**Evidencia:**
+- 📊 Archivo JMeter `.jmx`.  
+- 📄 CSV con métricas.  
+- 📑 Dashboard en Power BI (`Dashboard Asisya.pbix` + `Dashboard Asisya.pdf`).  
 
-- Envía cada request con el botón Send.
+---
 
-- Ve a la pestaña Test Results debajo de la respuesta.
+## 📂 Bonus – Dashboard Power BI
 
-- Allí podrás validar:
+Se construyó un dashboard en Power BI para visualizar resultados de rendimiento:  
 
-Código de estado esperado (200 o 400).
+- **Latencia promedio** (ms).  
+- **Throughput por tipo de petición**.  
+- **Tiempos de respuesta comparativos**.  
+- **% de error y total de solicitudes**.  
 
-Tiempo de respuesta < 2 segundos.
+📄 Entregables:  
+- `Dashboard Asisya.pbix` (editable en Power BI Desktop).  
+- `Dashboard Asisya.pdf` (versión exportada).  
 
-Estructura del JSON devuelto.
+**Valor agregado:**  
+Este dashboard facilita comunicar hallazgos técnicos a perfiles no técnicos, mostrando indicadores clave de desempeño en forma clara y visual.  
 
-Presencia y contenido de los campos obligatorios (idSolicitud, estado, mensaje) en el caso válido.
+---
 
-Mensaje de error en el caso inválido.
+## 📌 Recomendaciones de mejora (CI/CD y monitoreo)
 
-5. Ejecución automática (opcional)
+- **Paralelización de pruebas:**  
+  Ejecutar tests de Playwright con `--workers` y usar Thread Groups de JMeter para simular carga concurrente.  
 
-Si quieres ejecutar todas las pruebas en lote:
+- **Monitoreo de ejecución:**  
+  Centralizar logs de Postman y JMeter en un repositorio de resultados. Usar Power BI para visualizarlos.  
 
-- Abre la colección Asisya – API Tests.
+- **Integración CI/CD:**  
+  Propuesta de integrar Playwright y Postman en un pipeline de GitHub Actions, con métricas de % de éxito, tiempos y errores.  
 
-- Haz clic en el botón Run Collection.
+---
 
-- Selecciona el environment Asisya-Prod.
-
-- Ejecuta: se mostrarán los resultados de todos los casos en la consola de Postman.
-
-
-# Sección C – Debug y Mejora
-
-Se corrigieron selectores frágiles y esperas manuales.
-Ahora se usan `getByRole` y `expect()` para esperas inteligentes.
-
-
-## Contacto
-Para dudas o soporte, contactar al responsable del repositorio.
-Nombre: Erica Paola Lozano
-Email: ing.ericalozano.0310@gmail.com
-GitHub: [https://github.com/erpalora/Automatizacion_Asisya_pruebatecnica]
+## 👤 Contacto
+**Nombre:** Erica Paola Lozano  
+**Email:** ing.ericalozano.0310@gmail.com  
+**GitHub:** [https://github.com/erpalora/Automatizacion_Asisya_pruebatecnica](https://github.com/erpalora/Automatizacion_Asisya_pruebatecnica)
