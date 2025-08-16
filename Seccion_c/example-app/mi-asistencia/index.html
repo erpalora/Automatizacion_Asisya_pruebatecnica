@@ -1,0 +1,34 @@
+<!doctype html>
+<html lang="es">
+<head>
+  <meta charset="utf-8" />
+  <title>Mi Asistencia</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <style>
+    body { font-family: system-ui, -apple-system, Segoe UI, Roboto, Arial, sans-serif; margin: 40px; }
+    .card { border: 1px solid #e5e7eb; border-radius: 12px; padding: 16px; max-width: 520px; box-shadow: 0 1px 4px rgba(0,0,0,.06);}
+    .estado { display:inline-block; padding:6px 10px; border-radius: 999px; background:#eef2ff; }
+    .muted { color:#6b7280; }
+  </style>
+</head>
+<body>
+  <h1>Mi Asistencia</h1>
+
+  <p>Estado actual: <span class="estado" data-testid="estado-asistencia">ASIGNADO</span></p>
+
+  <section class="card" data-testid="profesional-card" aria-label="Profesional asignado">
+    <h2 class="muted">Profesional asignado</h2>
+    <p>Nombre: <strong data-testid="profesional-nombre">Dra. Ana Pérez</strong></p>
+    <p>Teléfono: <span data-testid="profesional-telefono">+57 312 555 1234</span></p>
+  </section>
+
+  <script>
+    // (Opcional) Simular cambios de estado para dar realismo
+    const estados = ["EN PROCESO","ASIGNADO","PENDIENTE","EN RUTA","COMPLETADO"];
+    setTimeout(() => {
+      const el = document.querySelector('[data-testid="estado-asistencia"]');
+      if (el) el.textContent = estados[Math.floor(Math.random()*estados.length)];
+    }, 1500);
+  </script>
+</body>
+</html>

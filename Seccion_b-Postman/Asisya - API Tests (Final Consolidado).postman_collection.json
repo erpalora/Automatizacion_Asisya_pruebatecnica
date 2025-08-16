@@ -1,0 +1,206 @@
+{
+	"info": {
+		"_postman_id": "43b5d737-6ae0-405a-a1ed-b0f8894b633b",
+		"name": "Asisya - API Tests (Final Consolidado)",
+		"description": "Colección con casos positivo (200) y negativo (400) para /api/asisya/solicitud-asistencia.",
+		"schema": "https://schema.getpostman.com/json/collection/v2.0.0/collection.json",
+		"_exporter_id": "46318234",
+		"_collection_link": "https://ericalozano.postman.co/workspace/e25614fb-eb26-4516-8db6-ccf8b5296ff2/collection/46318234-43b5d737-6ae0-405a-a1ed-b0f8894b633b?action=share&source=collection_link&creator=46318234"
+	},
+	"item": [
+		{
+			"name": "Solicitud de asistencia (válida)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Código HTTP 200\", function () {\r",
+							"    pm.response.to.have.status(200);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Tiempo de respuesta < 2s\", function () {\r",
+							"    pm.expect(pm.response.responseTime).to.be.below(2000);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Respuesta es JSON válido\", function () {\r",
+							"    pm.response.to.be.json; // Fixed the method to check if response is JSON\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Campos obligatorios presentes\", function () {\r",
+							"    const data = pm.response.json(); // Accessing the main response object\r",
+							"    pm.expect(data).to.have.property(\"idSolicitud\");\r",
+							"    pm.expect(data).to.have.property(\"estado\");\r",
+							"    pm.expect(data).to.have.property(\"mensaje\");\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Campos obligatorios no vacíos\", function () {\r",
+							"    const data = pm.response.json(); // Accessing the main response object\r",
+							"    pm.expect(data.idSolicitud).to.be.a(\"string\").and.not.empty;\r",
+							"    pm.expect(data.estado).to.be.a(\"string\").and.not.empty;\r",
+							"    pm.expect(data.mensaje).to.be.a(\"string\").and.not.empty;\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n  \"usuarioId\": \"USR999\",\n  \"tipoAsistencia\": \"medico_domicilio\",\n  \"direccion\": \"Cra 12 #34-56\",\n  \"fecha\": \"2025-08-02\"\n}"
+				},
+				"url": "{{base_url}}/api/asisya/solicitud-asistencia"
+			},
+			"response": [
+				{
+					"name": "Solicitud de asistencia (válida)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\n  \"usuarioId\": \"USR999\",\n  \"tipoAsistencia\": \"medico_domicilio\",\n  \"direccion\": \"Cra 12 #34-56\",\n  \"fecha\": \"2025-08-02\"\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/asisya/solicitud-asistencia"
+					},
+					"_postman_previewlanguage": "",
+					"header": [],
+					"cookie": [
+						{
+							"expires": "Invalid Date"
+						}
+					],
+					"body": "{\r\n  \"idSolicitud\": \"12345\",\r\n  \"estado\": \"EN_PROCESO\",\r\n  \"mensaje\": \"Solicitud registrada con éxito\"\r\n}"
+				}
+			]
+		},
+		{
+			"name": "Solicitud de asistencia (inválida)",
+			"event": [
+				{
+					"listen": "test",
+					"script": {
+						"exec": [
+							"pm.test(\"Código HTTP 400\", function () {\r",
+							"    pm.response.to.have.status(400);\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Respuesta es JSON válido\", function () {\r",
+							"    pm.response.to.be.json; // Fixed to check if response is JSON\r",
+							"});\r",
+							"\r",
+							"pm.test(\"Respuesta contiene propiedades esperadas de error\", function () {\r",
+							"    const data = pm.response.json();\r",
+							"    pm.expect(data).to.have.property(\"error\"); \r",
+							"    pm.expect(data.error).to.have.property(\"codigo\");\r",
+							"    pm.expect(data.error).to.have.property(\"mensaje\");\r",
+							"});\r",
+							""
+						],
+						"type": "text/javascript",
+						"packages": {}
+					}
+				}
+			],
+			"request": {
+				"method": "POST",
+				"header": [
+					{
+						"key": "Content-Type",
+						"value": "application/json"
+					}
+				],
+				"body": {
+					"mode": "raw",
+					"raw": "{\n    \"tipoAsistencia\": \"medico_domicilio\",\n    \"direccion\": \"Cra 12 #34-56\"\n}"
+				},
+				"url": "{{base_url}}/api/asisya/solicitud-asistencia"
+			},
+			"response": [
+				{
+					"name": "Solicitud Fallida (400)",
+					"originalRequest": {
+						"method": "POST",
+						"header": [
+							{
+								"key": "Content-Type",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"tipoAsistencia\": \"medico_domicilio\",\r\n    \"direccion\": \"Cra 12 #34-56\"\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": "{{base_url}}/api/asisya/solicitud-asistencia"
+					},
+					"status": "Bad Request",
+					"code": 400,
+					"_postman_previewlanguage": "Text",
+					"header": [
+						{
+							"key": "Content-Type",
+							"value": "application/json"
+						}
+					],
+					"cookie": [],
+					"body": "{\n    \"error\": {\n        \"codigo\": \"400\",\n        \"mensaje\": \"Campo usuarioId requerido\"\n    }\n}"
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "base_url",
+			"value": "https://fdcbbcc9-8128-4da2-b5b6-1dec1a36ac72.mock.pstmn.io"
+		}
+	]
+}
